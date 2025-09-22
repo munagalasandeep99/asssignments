@@ -25,7 +25,7 @@ def health():
 def db_test():
     conn = get_db_connection()
     if conn is None:
-        return jsonify({"status": "error", "message": "Database connection failed"}), 500
+        return jsonify({"status": "error", "message": "Database connection failed..."}), 500
     try:
         cur = conn.cursor()
         cur.execute("SELECT 1")
@@ -36,4 +36,5 @@ def db_test():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == '__main__':
+
     app.run(host='0.0.0.0', port=5000)
