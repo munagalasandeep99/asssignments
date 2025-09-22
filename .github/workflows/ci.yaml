@@ -1,64 +1,13 @@
-```yaml
-name: Flask CI Pipeline
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
+name: learn-github-actions
+run-name: ${{ github.actor }} is learning GitHub Actions
+on: [push]
 jobs:
-  test:
+  check-bats-version:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpassword
-          POSTGRES_DB: appdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
         with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Set environment variables
-        run: |
-          echo "DB_USER=testuser" >> $GITHUB_ENV
-          echo "DB_PASSWORD=testpassword" >> $GITHUB_ENV
-
-      - name: Run tests
-        run: pytest
-
-      - name: Start Flask app
-        run: |
-          python app.py &
-          sleep 5 # Wait for the server to start
-
-      - name: Test health endpoint
-        run: curl --fail http://localhost:5000/health
-
-      - name: Test database endpoint
-        run: curl --fail http://localhost:5000/db-test
-```
+          node-version: '20'
+      - run: npm install -g bats
+      - run: bats -v
